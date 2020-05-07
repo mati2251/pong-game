@@ -6,13 +6,14 @@ class Ball {
 		this.x = x;
 		this.y = y;
 		this.lost = document.getElementById("lost");
-		this.howManyStepX = Math.random() * (5) - 2;
+		this.howManyStepX = Math.random() * (3) - 1;
 		if (this.howManyStepX === 0) {
 			this.howManyStepX = 1;
 		}
 		this.howManyStepY = 1;
 		this.drawBall();
-		this.interval = setInterval(() => this.startBall(), 6);
+		this.time = 5;
+		this.interval = setInterval(() => this.startBall(), this.time);
 	}
 
 	getPosition = () => {
@@ -33,6 +34,7 @@ class Ball {
 		this.x += this.howManyStepX;
 		this.y += this.howManyStepY;
 		this.checkPosition()
+		this.time -= 0.0001;
 		this.drawBall()
 	}
 
@@ -45,7 +47,13 @@ class Ball {
 	}
 
 	checkPosition = () => {
-		if(this.y === canvas.height-76){
+		if(this.y < 20){
+			this.howManyStepY = - this.howManyStepY
+		}
+		if(this.x < 20 || this.x> canvas.width-20){
+			this.howManyStepX = - this.howManyStepX
+		}
+		if(this.y === canvas.height-76 && this.x > paddle.getPosition().x && this.x < paddle.getPosition().x+208){
 			this.howManyStepY= - this.howManyStepY
 		}
 		else if (this.y > canvas.height) {
