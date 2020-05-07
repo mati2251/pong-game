@@ -14,6 +14,7 @@ button{
     border: unset;
     border-radius: unset;
     color: #000000;
+    margin:10px;
     font-weight: bold;
     text-transform: uppercase;
     padding: 5px 10px 5px 10px;
@@ -38,4 +39,22 @@ button:active::after{
 
 h1{
     color: white;
+    margin: 10px;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+h3{
+    font-size: 15px;
+    color: #cccccc;
+}
+
+footer{
+    display: flex;
+    justify-content: center;
 }
