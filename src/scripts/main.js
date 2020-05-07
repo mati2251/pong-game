@@ -7,7 +7,7 @@ class Ball {
 		this.y = y;
 		this.score = document.getElementById("score")
 		this.lost = document.getElementById("lost");
-		this.howManyStepX = Math.floor(Math.random() * (2));
+		this.howManyStepX = Math.random() * (2) - 1;
 		if (this.howManyStepX === 0) {
 			this.howManyStepX = -1.0;
 		}
@@ -15,8 +15,8 @@ class Ball {
 		this.drawBall();
 		this.score.innerHTML = "0"
 		this.displayScore();
-		this.time = 5;
-		this.interval = setInterval(() => this.startBall(), this.time);
+		this.interval = setInterval(() => this.startBall(), 4);
+		this.bool = true;
 	}
 
 	getPosition = () => {
@@ -37,7 +37,6 @@ class Ball {
 		this.x += this.howManyStepX;
 		this.y += this.howManyStepY;
 		this.checkPosition()
-		this.time -= 0.0001;
 		this.drawBall()
 	}
 
@@ -59,22 +58,33 @@ class Ball {
 
 	checkPosition = () => {
 		if (this.y < 20) {
-			this.howManyStepY = -this.howManyStepY
-			this.howManyStepX *= 1.1
+			this.howManyStepY = -this.howManyStepY;
+			this.howManyStepX *= 1.07;
 		}
 		if (this.x < 20 || this.x > canvas.width - 20) {
-			this.howManyStepX = -this.howManyStepX
-			this.howManyStepY *= 1.1
+			this.howManyStepX = -this.howManyStepX;
+			this.howManyStepY *= 1.07;
 		}
-		if (this.y >= canvas.height - 76 && this.x > paddle.getPosition().x && this.x < paddle.getPosition().x + 208) {
-			this.howManyStepY = -this.howManyStepY
-			this.howManyStepX *= 1.1
-			this.score.innerText = (parseInt(this.score.innerText)+1).toString()
+		if (this.y >= canvas.height - 76 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220) {
+			this.howManyStepY = -this.howManyStepY;
+			this.howManyStepX *= 1.07;
+			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
+		} else if (this.y >= canvas.height - 72 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220) {
+			this.howManyStepY = -this.howManyStepY;
+			this.howManyStepX *= 1.07;
+			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
 		}
+		//else if (this.y > canvas.height - 71 && this.y <= canvas.height - 45 && this.x - 5 >= paddle.getPosition().x + 208 && this.x <= paddle.getPosition().x + 208) {
+		// 	this.stopInterval();
+		// 	console.log("Ball ")
+		// 	console.log(this.getPosition())
+		// 	console.log(paddle.getPosition())
+		// }
+
 		if (this.y > canvas.height) {
 			this.displayLost();
-			this.score.innerText = `Your score ${this.score.innerText}`
-			document.onmousemove = (e) => undefined
+			this.score.innerText = `Your score ${this.score.innerText}`;
+			document.onmousemove = (e) => undefined;
 			this.stopInterval();
 		}
 	}
