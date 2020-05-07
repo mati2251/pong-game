@@ -58,3 +58,7 @@ footer{
     display: flex;
     justify-content: center;
 }
+
+.border{
+    border: 4px solid #ffffff;
+}
