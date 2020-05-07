@@ -5,7 +5,14 @@ class Ball {
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
+		this.lost = document.getElementById("lost");
+		this.howManyStepX = Math.random() * (5) - 2;
+		if (this.howManyStepX === 0) {
+			this.howManyStepX = 1;
+		}
+		this.howManyStepY = 1;
 		this.drawBall();
+		this.interval = setInterval(() => this.startBall(), 6);
 	}
 
 	getPosition = () => {
@@ -17,7 +24,36 @@ class Ball {
 		this.y = y;
 	}
 
+	stopInterval = () => {
+		window.clearInterval(this.interval);
+	}
+
 	startBall = () => {
+		ctx.clearRect(this.x - 24, this.y - 24, 48, 48)
+		this.x += this.howManyStepX;
+		this.y += this.howManyStepY;
+		this.checkPosition()
+		this.drawBall()
+	}
+
+	displayLost = () => {
+		this.lost.className = 'lostDisplay';
+	}
+
+	hiddenLost = () => {
+		this.lost.className = 'lost';
+	}
+
+	checkPosition = () => {
+		if(this.y === canvas.height-76){
+			this.howManyStepY= - this.howManyStepY
+		}
+		else if (this.y > canvas.height) {
+			console.log("lost")
+			this.displayLost();
+			document.onmousemove = (e) => undefined
+			this.stopInterval();
+		}
 	}
 
 	drawBall = () => {
@@ -51,8 +87,6 @@ class Paddle {
 
 	changePaddlePositionWithMouse = (event) => {
 		const positionX = event.pageX - 104;
-		console.log(positionX);
-		console.log(canvas.width);
 		this.cleanPaddle();
 		this.setPosition(positionX);
 		this.drawPaddle();
@@ -61,7 +95,7 @@ class Paddle {
 	drawPaddle = () => {
 		ctx.beginPath();
 		ctx.strokeStyle = "#FFFFFF"
-		ctx.lineWidth = 4;
+		ctx.lineWidth = 4.5;
 		ctx.strokeRect(this.x, this.y, 200, 20)
 		ctx.closePath();
 	}
@@ -74,17 +108,26 @@ const setCanvasDimension = () => {
 
 setCanvasDimension()
 
+let ball;
+let paddle;
+
 document.getElementById("start").onclick = (() => {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	canvas.className = "border"
-	const ball = new Ball(canvas.width / 2, 50)
-	const paddle = new Paddle(canvas.width / 2 - 100, canvas.height - 50)
+	if (ball !== undefined) {
+		ball.hiddenLost()
+		ball.stopInterval();
+	}
+	ball = new Ball(canvas.width / 2, 50)
+	paddle = new Paddle(canvas.width / 2 - 100, canvas.height - 50)
 	document.onmousemove = (e) => paddle.changePaddlePositionWithMouse(e)
 })
 
 window.addEventListener("resize", () => {
+	ball.hiddenLost()
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	document.onmousemove = (e) => undefined
+	ball.stopInterval();
 	setCanvasDimension()
 })
 
