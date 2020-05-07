@@ -73,3 +73,14 @@ footer{
     top: 30vh;
     left: calc( 50vw - 150);
 }
+
+.score {
+    display: none;
+}
+
+.scoreDisplay {
+    display: block;
+    position: absolute;
+    top: 35vh;
+    left: calc( 50vw - 150);
+}

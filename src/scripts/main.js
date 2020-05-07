@@ -5,13 +5,16 @@ class Ball {
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
+		this.score = document.getElementById("score")
 		this.lost = document.getElementById("lost");
-		this.howManyStepX = Math.random() * (3) - 1;
+		this.howManyStepX = Math.floor(Math.random() * (2));
 		if (this.howManyStepX === 0) {
-			this.howManyStepX = 1;
+			this.howManyStepX = -1.0;
 		}
-		this.howManyStepY = 1;
+		this.howManyStepY = 1.0;
 		this.drawBall();
+		this.score.innerHTML = "0"
+		this.displayScore();
 		this.time = 5;
 		this.interval = setInterval(() => this.startBall(), this.time);
 	}
@@ -46,19 +49,31 @@ class Ball {
 		this.lost.className = 'lost';
 	}
 
+	displayScore = () => {
+		this.score.className = 'scoreDisplay';
+	}
+
+	hiddenScore = () => {
+		this.score.className = 'score';
+	}
+
 	checkPosition = () => {
-		if(this.y < 20){
-			this.howManyStepY = - this.howManyStepY
+		if (this.y < 20) {
+			this.howManyStepY = -this.howManyStepY
+			this.howManyStepX *= 1.1
 		}
-		if(this.x < 20 || this.x> canvas.width-20){
-			this.howManyStepX = - this.howManyStepX
+		if (this.x < 20 || this.x > canvas.width - 20) {
+			this.howManyStepX = -this.howManyStepX
+			this.howManyStepY *= 1.1
 		}
-		if(this.y === canvas.height-76 && this.x > paddle.getPosition().x && this.x < paddle.getPosition().x+208){
-			this.howManyStepY= - this.howManyStepY
+		if (this.y >= canvas.height - 76 && this.x > paddle.getPosition().x && this.x < paddle.getPosition().x + 208) {
+			this.howManyStepY = -this.howManyStepY
+			this.howManyStepX *= 1.1
+			this.score.innerText = (parseInt(this.score.innerText)+1).toString()
 		}
-		else if (this.y > canvas.height) {
-			console.log("lost")
+		if (this.y > canvas.height) {
 			this.displayLost();
+			this.score.innerText = `Your score ${this.score.innerText}`
 			document.onmousemove = (e) => undefined
 			this.stopInterval();
 		}
@@ -103,7 +118,7 @@ class Paddle {
 	drawPaddle = () => {
 		ctx.beginPath();
 		ctx.strokeStyle = "#FFFFFF"
-		ctx.lineWidth = 4.5;
+		ctx.lineWidth = 4;
 		ctx.strokeRect(this.x, this.y, 200, 20)
 		ctx.closePath();
 	}
@@ -123,7 +138,7 @@ document.getElementById("start").onclick = (() => {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	canvas.className = "border"
 	if (ball !== undefined) {
-		ball.hiddenLost()
+		ball.hiddenLost();
 		ball.stopInterval();
 	}
 	ball = new Ball(canvas.width / 2, 50)
@@ -133,6 +148,7 @@ document.getElementById("start").onclick = (() => {
 
 window.addEventListener("resize", () => {
 	ball.hiddenLost()
+	ball.hiddenScore()
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	document.onmousemove = (e) => undefined
 	ball.stopInterval();
