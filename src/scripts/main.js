@@ -60,26 +60,25 @@ class Ball {
 		if (this.y < 20) {
 			this.howManyStepY = -this.howManyStepY;
 			this.howManyStepX *= 1.07;
+			this.bool = true
 		}
 		if (this.x < 20 || this.x > canvas.width - 20) {
+			this.bool = true
 			this.howManyStepX = -this.howManyStepX;
 			this.howManyStepY *= 1.07;
 		}
-		if (this.y >= canvas.height - 76 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220) {
-			this.howManyStepY = -this.howManyStepY;
-			this.howManyStepX *= 1.07;
+		if (this.y >= canvas.height - 72 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220 && this.bool) {
+			this.bool = false
+			this.howManyStepX = -this.howManyStepX;
+			this.howManyStepY *= 1.07;
 			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
-		} else if (this.y >= canvas.height - 72 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220) {
+		} else if (this.y >= canvas.height - 76 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220 && this.bool) {
+			this.bool = false
 			this.howManyStepY = -this.howManyStepY;
 			this.howManyStepX *= 1.07;
 			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
 		}
-		//else if (this.y > canvas.height - 71 && this.y <= canvas.height - 45 && this.x - 5 >= paddle.getPosition().x + 208 && this.x <= paddle.getPosition().x + 208) {
-		// 	this.stopInterval();
-		// 	console.log("Ball ")
-		// 	console.log(this.getPosition())
-		// 	console.log(paddle.getPosition())
-		// }
+
 
 		if (this.y > canvas.height) {
 			this.displayLost();
