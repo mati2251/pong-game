@@ -1,5 +1,5 @@
 # Pong game
-The classical game pong
+The classical the pong game
 ## Live demo
 [Live Demo](https://mati2251.github.io/pong-game/)
 ## Goal
