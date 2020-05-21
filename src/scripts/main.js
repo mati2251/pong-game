@@ -4,7 +4,6 @@ const ctx = canvas.getContext('2d');
 class Ball {
 	constructor(x, y) {
 		this.x = x;
-		this.level = 1;
 		this.y = y;
 		this.score = document.getElementById("score")
 		this.lost = document.getElementById("lost");
@@ -18,15 +17,28 @@ class Ball {
 		this.displayScore();
 		this.interval = setInterval(() => this.startBall(), 4);
 		this.bool = true;
-		setInterval(() => {
-			this.howManyStepY = this.howManyStepY * 1.25
-			this.howManyStepX = this.howManyStepX * 1.25
-			document.getElementById("lost").innerText = `NEXT LEVEL ${(++this.level).toString()}`
+		this.secondBool = true;
+		setTimeout(() => {
+			document.getElementById("lost").innerHTML = "NEXT LEVEL OBSTACLES";
 			this.displayLost();
 			setTimeout(() => {
 				this.hiddenLost();
-				document.getElementById("lost").innerText = "YOU LOST"
-			},1000)
+				document.getElementById("lost").innerHTML = "YOU LOST";
+			}, 1500)
+			for (let i = 0; i < 6; i++) {
+				obstacles[obstacles.length] = new Obstacle(Math.floor(Math.random() * canvas.width), Math.floor(Math.random() * (canvas.height - 300)), false)
+			}
+			setTimeout(() => {
+				document.getElementById("lost").innerHTML = "NEXT LEVEL OBSTACLES WITH FLIP";
+				this.displayLost();
+				setTimeout(() => {
+					this.hiddenLost();
+					document.getElementById("lost").innerHTML = "YOU LOST";
+				}, 2000)
+				for (let i = 0; i < 6; i++) {
+					obstacles[obstacles.length] = new Obstacle(Math.floor(Math.random() * canvas.width), Math.floor(Math.random() * (canvas.height - 300)), true)
+				}
+			}, 30000)
 		}, 30000)
 	}
 
@@ -68,30 +80,45 @@ class Ball {
 	}
 
 	checkPosition = () => {
+		obstacles.forEach((item) => {
+			const position = item.getPosition();
+			if (position.x - 4 <= this.x + 24 && position.x + 158 >= this.x - 24 && position.y - 28 <= this.y && position.y + 28 >= this.y && this.secondBool === true) {
+				this.howManyStepY = -this.howManyStepY;
+				if (item.flip === true) {
+					this.howManyStepX = -this.howManyStepX;
+				}
+				this.howManyStepX *= 1.05;
+				this.secondBool = false
+				this.bool = true
+			}
+		})
 		if (this.y < 20) {
+			this.secondBool = true
 			this.howManyStepY = -this.howManyStepY;
-			this.howManyStepX *= 1.05
+			this.howManyStepX *= 1.05;
 			this.bool = true
 		}
 		if (this.x < 20 || this.x > canvas.width - 20) {
+			this.secondBool = true
 			this.bool = true
 			this.howManyStepX = -this.howManyStepX;
 			this.howManyStepY *= 1.05;
 		}
 		if (this.y >= canvas.height - 72 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220 && this.bool) {
+			this.secondBool = true
 			this.bool = false
 			this.howManyStepX = -this.howManyStepX;
 			this.howManyStepY *= 1.05;
 			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
 		} else if (this.y >= canvas.height - 76 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220 && this.bool) {
+			this.secondBool = true;
 			this.bool = false
 			this.howManyStepY = -this.howManyStepY;
 			this.howManyStepX *= 1.05;
 			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
 		}
-
-
 		if (this.y > canvas.height) {
+			this.secondBool = true
 			this.displayLost();
 			this.score.innerText = `Your score ${this.score.innerText}`;
 			document.onmousemove = (e) => undefined;
@@ -109,11 +136,42 @@ class Ball {
 	}
 }
 
+class Obstacle {
+	constructor(x, y, flip = false) {
+		this.x = x;
+		this.y = y;
+		this.flip = flip
+		this.drawObstacle()
+	}
+
+	drawObstacle = () => {
+		ctx.beginPath();
+		ctx.strokeStyle = "#FFFFFF"
+		if (this.flip) {
+			ctx.strokeStyle = "#FF0000"
+		}
+		ctx.lineWidth = 2;
+		ctx.strokeRect(this.x, this.y, 150, 0)
+		ctx.closePath();
+	}
+
+	cleanObstacle = () => {
+		ctx.beginPath();
+		ctx.clearRect(this.x, this.y, 200, 20)
+		ctx.closePath();
+	}
+
+	getPosition = () => {
+		return {x: this.x, y: this.y}
+	}
+}
+
 class Paddle {
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
 		this.drawPaddle();
+
 	}
 
 	setPosition(x) {
@@ -153,8 +211,10 @@ setCanvasDimension()
 
 let ball;
 let paddle;
+let obstacles = [];
 
 document.getElementById("start").onclick = (() => {
+	obstacles = []
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	canvas.className = "border"
 	if (ball !== undefined) {
