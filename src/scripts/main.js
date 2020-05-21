@@ -4,6 +4,7 @@ const ctx = canvas.getContext('2d');
 class Ball {
 	constructor(x, y) {
 		this.x = x;
+		this.level = 1;
 		this.y = y;
 		this.score = document.getElementById("score")
 		this.lost = document.getElementById("lost");
@@ -17,6 +18,16 @@ class Ball {
 		this.displayScore();
 		this.interval = setInterval(() => this.startBall(), 4);
 		this.bool = true;
+		setInterval(() => {
+			this.howManyStepY = this.howManyStepY * 1.25
+			this.howManyStepX = this.howManyStepX * 1.25
+			document.getElementById("lost").innerText = `NEXT LEVEL ${(++this.level).toString()}`
+			this.displayLost();
+			setTimeout(() => {
+				this.hiddenLost();
+				document.getElementById("lost").innerText = "YOU LOST"
+			},1000)
+		}, 30000)
 	}
 
 	getPosition = () => {
@@ -59,23 +70,23 @@ class Ball {
 	checkPosition = () => {
 		if (this.y < 20) {
 			this.howManyStepY = -this.howManyStepY;
-			this.howManyStepX *= 1.07;
+			this.howManyStepX *= 1.05
 			this.bool = true
 		}
 		if (this.x < 20 || this.x > canvas.width - 20) {
 			this.bool = true
 			this.howManyStepX = -this.howManyStepX;
-			this.howManyStepY *= 1.07;
+			this.howManyStepY *= 1.05;
 		}
 		if (this.y >= canvas.height - 72 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220 && this.bool) {
 			this.bool = false
 			this.howManyStepX = -this.howManyStepX;
-			this.howManyStepY *= 1.07;
+			this.howManyStepY *= 1.05;
 			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
 		} else if (this.y >= canvas.height - 76 && this.x >= paddle.getPosition().x - 14 && this.x <= paddle.getPosition().x + 220 && this.bool) {
 			this.bool = false
 			this.howManyStepY = -this.howManyStepY;
-			this.howManyStepX *= 1.07;
+			this.howManyStepX *= 1.05;
 			this.score.innerText = (parseInt(this.score.innerText) + 1).toString();
 		}
 
