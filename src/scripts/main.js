@@ -18,7 +18,7 @@ class Ball {
 		this.interval = setInterval(() => this.startBall(), 4);
 		this.bool = true;
 		this.secondBool = true;
-		setTimeout(() => {
+		this.timeoutId = setTimeout(() => {
 			document.getElementById("lost").innerHTML = "NEXT LEVEL OBSTACLES";
 			this.displayLost();
 			setTimeout(() => {
@@ -28,7 +28,7 @@ class Ball {
 			for (let i = 0; i < 6; i++) {
 				obstacles[obstacles.length] = new Obstacle(Math.floor(Math.random() * canvas.width), Math.floor(Math.random() * (canvas.height - 300)), false)
 			}
-			setTimeout(() => {
+			this.timeoutId2 = setTimeout(() => {
 				document.getElementById("lost").innerHTML = "NEXT LEVEL OBSTACLES WITH FLIP";
 				this.displayLost();
 				setTimeout(() => {
@@ -53,6 +53,8 @@ class Ball {
 
 	stopInterval = () => {
 		window.clearInterval(this.interval);
+		window.clearTimeout(this.timeoutId)
+		window.clearTimeout(this.timeoutId2)
 	}
 
 	startBall = () => {
@@ -61,6 +63,9 @@ class Ball {
 		this.y += this.howManyStepY;
 		this.checkPosition()
 		this.drawBall()
+		obstacles.forEach((item) => {
+			item.drawObstacle()
+		});
 	}
 
 	displayLost = () => {
@@ -82,7 +87,7 @@ class Ball {
 	checkPosition = () => {
 		obstacles.forEach((item) => {
 			const position = item.getPosition();
-			if (position.x - 4 <= this.x + 24 && position.x + 158 >= this.x - 24 && position.y - 28 <= this.y && position.y + 28 >= this.y && this.secondBool === true) {
+			if (position.x - 4 <= this.x + 24 && position.x + 158 >= this.x - 24 && position.y - 28 <= this.y + 2  && position.y + 28 >= this.y && this.secondBool === true) {
 				this.howManyStepY = -this.howManyStepY;
 				if (item.flip === true) {
 					this.howManyStepX = -this.howManyStepX;
